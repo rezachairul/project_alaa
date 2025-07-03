@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title -->
+    <title>Alaaaaa</title>
+    <!-- JS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      const backgroundImages = [
+        "assets/img/bg/bg_1.jpg",
+        "assets/img/bg/bg_2.jpg",
+        "assets/img/bg/bg_3.jpg"
+      ];
+      const chosenBackground =
+        backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+    
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.style.backgroundImage = `url('${chosenBackground}')`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+      });
+    </script>    
+  </head>
+
+  <body>    
+    <div class="flex items-center justify-center p-4 min-h-screen">
+      <div class="bg-white bg-opacity-90 shadow-2xl rounded-2xl p-6 w-[95vw] max-w-[800px] space-y-8 backdrop-blur-md">
+        <div>
+          <p class="text-3xl sm:text-4xl text-pink-500 mb-4 text-center font-bold">
+            Please find 'Alaaa'
+          </p>
+          <div id="image-grid" class="grid grid-cols-3 gap-4"></div>
+        </div>
+    
+        <div class="flex items-center space-x-3 text-base">
+          <input type="checkbox" id="not-robot" class="w-6 h-6" />
+          <label for="not-robot" class="text-xl sm:text-2xl text-pink-700 italic font-medium" >
+            FROM Alaa : Love Across The Miles
+          </label>
+        </div>
+    
+        <button id="submit-btn" class="w-full py-7 text-3xl font-bold bg-pink-600 text-white rounded-xl hover:bg-pink-700 transition" >
+          Submit
+        </button>
+    
+        <div
+          id="popup" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50" >
+          <div class="bg-white p-8 rounded-2xl shadow-xl text-center space-y-6 max-w-xl w-[95vw]" >
+            <h2 class="text-4xl font-extrabold text-pink-500">Semprotulation Alaaaa!</h2>
+            <img
+              src="assets/img/reward/f_reward.jpg"
+              alt="Reward"
+              id="reward-img"
+              class="rounded-xl mx-auto w-full max-w-[480px]"
+            />
+            <button id="close-popup" class="mt-4 px-6 py-3 bg-blue-700 text-white text-lg rounded hover:bg-blue-800" >
+              Close
+            </button>
+          </div>
+        </div>
+    
+        <div id="fail-popup"  class="fixed inset-0 hidden flex items-center justify-center z-50" >
+          <div class="bg-white p-8 rounded-2xl shadow-xl text-center space-y-6 max-w-xl w-[95vw]" >
+            <h2 class="text-3xl font-bold text-Black-400"></h2>
+            <p class="text-3xl text-pink-1100">Find L again!</p>
+            <br />
+            <button id="close-fail" class="mt-4 px-6 py-3 bg-pink-700 text-white text-lg rounded hover:bg-gray-800" >
+              Retry
+            </button>
+          </div>
+        </div>
+    
+        <!-- Copyright -->
+        <div class="text-sm text-gray-800 text-center pt-4">
+          &copy; 2025 Alaaaa. Made with ありがとう ございます 😁.
+          <br />
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      .grid-tile.selected {
+        outline: 4px solid #eb2599;
+      }
+    </style>
+    
+    <script>
+      const correctPool = [
+        "assets/img/correct/l_1.jpg",
+        "assets/img/correct/l_2.jpg",
+        "assets/img/correct/l_3.jpg",
+        "assets/img/correct/l_4.jpg",
+        "assets/img/correct/l_5.jpg",
+      ];
+      const wrongPool = Array.from(
+        { length: 7 },
+        (_, i) => `assets/img/wrong/layer_${i + 1}.jpg`
+      );
+    
+      const rewardImages = [
+        "assets/img/reward/l_1.jpg",
+        "assets/img/reward/l_2.jpg",
+        "assets/img/reward/l_3.jpg",
+        "assets/img/reward/l_4.jpg",
+        "assets/img/reward/l_5.jpg",
+      ];
+
+      const gridContainer = document.getElementById("image-grid");
+      const popup = document.getElementById("popup");
+      const failPopup = document.getElementById("fail-popup");
+      const closeBtn = document.getElementById("close-popup");
+      const closeFailBtn = document.getElementById("close-fail");
+      const submitBtn = document.getElementById("submit-btn");
+      const rewardImageElement = document.getElementById("reward-img");
+      let currentCorrect = [];
+    
+      function shuffle(array) {
+        return [...array].sort(() => Math.random() - 0.5);
+      }
+    
+      function renderGrid() {
+        currentCorrect = shuffle(correctPool).slice(0, 3);
+        const randomWrong = shuffle(wrongPool).slice(0, 6);
+        const images = shuffle([...currentCorrect, ...randomWrong]);
+    
+        gridContainer.innerHTML = "";
+        images.forEach((src) => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.setAttribute("data-file", src);
+          img.className =
+            "grid-tile aspect-square cursor-pointer rounded-md object-cover w-full";
+          img.addEventListener("click", () => {
+            img.classList.toggle("selected");
+          });
+          gridContainer.appendChild(img);
+        });
+      }
+    
+      submitBtn.addEventListener("click", () => {
+        const selected = Array.from(
+          document.querySelectorAll(".grid-tile.selected")
+        );
+        const selectedFiles = selected.map((img) => img.getAttribute("data-file"));
+        const isCorrect =
+          selectedFiles.length === 3 &&
+          currentCorrect.every((file) => selectedFiles.includes(file));
+    
+        if (isCorrect) {
+          const randomReward =
+            rewardImages[Math.floor(Math.random() * rewardImages.length)];
+          rewardImageElement.src = randomReward;
+          popup.classList.remove("hidden");
+        } else {
+          failPopup.classList.remove("hidden");
+        }
+      });
+    
+      closeBtn.addEventListener("click", () => {
+        popup.classList.add("hidden");
+        renderGrid();
+      });
+    
+      closeFailBtn.addEventListener("click", () => {
+        failPopup.classList.add("hidden");
+        renderGrid();
+      });
+    
+      renderGrid();
+    </script>
+    
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-KS4B26KGFG"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+    
+      gtag("config", "G-KS4B26KGFG");
+    </script>  
+  </body>
+</html>
